@@ -1,5 +1,5 @@
 const url   = "https://www.cdc.gov.tw/Category/NewsPage/EmXemht4IT-IRAPrAnyG9A"
-const DEBUG = 1;
+const DEBUG = 0;
 const date  = `${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`
 const cache = CacheService.getScriptCache()
 function setup() {
@@ -38,8 +38,11 @@ function runner(){
         if(date.indexOf(elemDate) == -1){
           break;
         }else{
-          output += `${elem.text()} (https://www.cdc.gov.tw/${elem.attr('href')})
+          output += `<h1>${elem.text()} (https://www.cdc.gov.tw/${elem.attr('href')})</h1>
           <br>`
+          let content = UrlFetchApp.fetch(`https://www.cdc.gov.tw/${elem.attr('href')}`).getContentText();
+          let _$ = Cheerio.load(content);
+          output += _$(".con-word").html().replace(/新增/g,"<b>新增</b>")+"<br><hr><br>"
         }
       }
       Logger.log(output)
